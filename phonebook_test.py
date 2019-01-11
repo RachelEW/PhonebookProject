@@ -16,27 +16,34 @@ import sqlite3 #importing SQLite toolkit
 #        print(line["business name"])
 
 with open('mock_data_business.json') as json_file:  
-    business_data = json.load(json_file)
+    business_phonebook = json.load(json_file)
 #    print(data)
     business_name_list = []
     for i in business_data:
         business_info = phonebook2
 #        print(line, "\n\n")
 #        print(line["business name"])
-        bName = line["business name"]
-        bNameStr = str(bName)
-        print(bNameStr)
-        business_name_list.extend(bNameStr)
-        print(business_name_list)
+#        bName = line["business name"]
+#        bNameStr = str(bName)
+#        print(bNameStr)
+#        business_name_list.extend(bNameStr)
+#        print(business_name_list)
+#        phonebook = json.load(people_phonebook)
+    business_names = []
+    for i in range(len(business_phonebook)):
+       business_info = business_phonebook[i]
+       first_name = person_info ['first_name']
+       first_names.append(first_name)
+    print(first_names)  
 
-with open('mock_data_people.json') as json_file2:
-    people_phonebook = json.load(json_file2)
+with open('mock_data_people.json') as people_phonebook:
+    phonebook = json.load(people_phonebook)
     first_names = []
     for i in range(len(phonebook)):
        person_info = phonebook[i]
        first_name = person_info ['first_name']
        first_names.append(first_name)
-    print(first_names)      
+    print(first_names)  
         
     
 #
