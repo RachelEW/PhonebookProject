@@ -144,7 +144,7 @@ def join_tables():
     c.execute('SELECT longitude, latitude FROM people_table INNER JOIN geopointe_table ON (people_table.postcode = geopointe_table.postcode) WHERE last_name ="Imorts"')
     for row in c.fetchall():
         print(row)
-join_tables()
+#join_tables()
 
 ################
 """TESTING"""
