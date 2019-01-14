@@ -19,28 +19,28 @@ c = conn.cursor()
 
 postcode_list = []
 
+endpoint_postcode = "https://api.postcodes.io/postcodes/"
+
 def read_postcode_person_phonebook():
     c.execute('SELECT * FROM people_table ')
     for row in c.fetchall():
         postcode_list.append(row[5])
         print(postcode_list)
+     
+read_postcode_person_phonebook()        
 
-#def find_postcode():
-#    for i in range(len(postcodes_list)):
-        
-        
-#main_url = "https://api.postcodes.io/postcodes/"
-#endpoint = "https://api.postcodes.io/postcodes/"
-#payload = {"q": "London,UK", "units":"metric", "appid":"API KEY"}
-#
-#response = requests.get(endpoint, params=payload)
-#data = response.json() #in a json format
-#
-#print('This is what data looks like\n')
-#print(data)
-#
-#print (response.url)
-#print(response.status_code)
-#print(response.headers["content-type"])
-        
-read_postcode_person_phonebook()
+print('----------------------------------------')
+
+def looping_through_postcodes():
+    for i in range(len(postcode_list)):
+#    
+#        test_postcode_url = (endpoint_postcode + postcode_list[i])
+#        print(test_postcode_url)
+        postcode_response = requests.get(endpoint_postcode + postcode_list[i])
+        data_postcode = postcode_response.json()
+        print(data_postcode['result']['longitude'])
+
+looping_through_postcodes()
+
+
+   
