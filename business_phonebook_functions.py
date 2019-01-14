@@ -21,6 +21,8 @@ def extract_business_type_list(user_category):
     c.execute('SELECT * FROM business_table WHERE business_category =?', (user_category,))
     for row in c.fetchall():
         print(row)
+    return(row)
+        
     
 
 def sort_business_type():
