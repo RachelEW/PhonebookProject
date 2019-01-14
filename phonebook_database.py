@@ -94,10 +94,12 @@ def read_from_business_phonebook_1():
 #####################
 """Location Table"""
 #####################
+
 def create_table_geopointe():
    c.execute('CREATE TABLE IF NOT EXISTS geopointe_table(postcode REAL, longitude REAL,latitude REAL)')
 create_table_geopointe()
-###---looking up Postcodes from person table---###
+
+###---looking up postcodes from person table---###
 postcode_list = []
 endpoint_postcode = "https://api.postcodes.io/postcodes/"
 def read_postcode_person_phonebook():
@@ -108,7 +110,7 @@ def read_postcode_person_phonebook():
      
 read_postcode_person_phonebook()     
 
-
+###---looking up postcodes from business table---###
 def read_postcode_business_phonebook():
     c.execute('SELECT * FROM business_table ')
     for row in c.fetchall():
@@ -117,7 +119,7 @@ def read_postcode_business_phonebook():
      
 read_postcode_business_phonebook()  
    
-
+###---adding postcodes, longitude and latitute to third table---###
 def looping_through_postcodes_geopointe():
     for i in range(len(postcode_list)):
         postcode_response = requests.get(endpoint_postcode + postcode_list[i])
@@ -139,7 +141,3 @@ looping_through_postcodes_geopointe()
 
 #read_from_people_phonebook1()
 #read_from_business_phonebook_1()
-
-#This is for testing purpose only 
-#This is a comment
-#Another change
