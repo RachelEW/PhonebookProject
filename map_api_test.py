@@ -31,16 +31,31 @@ read_postcode_person_phonebook()
 
 print('----------------------------------------')
 
-def looping_through_postcodes():
+def looping_through_postcodes_longitude():
     for i in range(len(postcode_list)):
-#    
-#        test_postcode_url = (endpoint_postcode + postcode_list[i])
-#        print(test_postcode_url)
         postcode_response = requests.get(endpoint_postcode + postcode_list[i])
         data_postcode = postcode_response.json()
-        print(data_postcode['result']['longitude'])
+        if data_postcode['status'] == 200:
+            longitude = data_postcode['result'] ['longitude']
+            print(longitude)
+        else:
+            pass
 
-looping_through_postcodes()
+looping_through_postcodes_longitude()
+
+
+def looping_through_postcodes_latitude():
+    for i in range(len(postcode_list)):
+        postcode_response = requests.get(endpoint_postcode + postcode_list[i])
+        data_postcode = postcode_response.json()
+        if data_postcode['status'] == 200:
+            latitude = data_postcode['result'] ['latitude']
+            print(latitude)
+        else:
+            pass
+
+looping_through_postcodes_latitude()
+
 
 
    
