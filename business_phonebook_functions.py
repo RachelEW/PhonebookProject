@@ -11,7 +11,7 @@ from phonebook_database import *
 #---------------------------------------------#
 
 business_category_list = []
-##---creates list of businesses based on user input---###
+##---creates list of all businesses categories (for user to select from later)---###
 def create_business_category_list():
     c.execute('SELECT * FROM business_table')
     for row in c.fetchall():
@@ -20,14 +20,14 @@ def create_business_category_list():
     return business_category_list
 create_business_category_list()
 
-###---returns business types which match user's search---###
+###---Main Function: returns business types which match user's search---###
 def extract_business_type_list(user_category):
     c.execute('SELECT * FROM business_table WHERE business_category =?', (user_category,))
     for row in c.fetchall():
         print(row)
     return(row)
 
-###---user chooses which business tye to filter results by---###        
+###---user inputs which business type to filter results by---###        
 def sort_business_type():
     user_category = input('Choose one of the following business types{}'.format(business_category_list))
     extract_business_type_list(user_category)
