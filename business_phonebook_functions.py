@@ -5,6 +5,7 @@ Created on Mon Jan 14 16:03:28 2019
 @author: Katharina
 """
 from phonebook_database import *
+from math import radians, sin, asin, cos, atan, atan2, sqrt
 
 #---------------------------------------------#
 #Filtering Business Table by Business Category
@@ -56,12 +57,32 @@ def getting_latlong_from_user():
     else:
         print('Postcode not recognized!')
 
-
 #---Getting latitude and longitude from business_category_postcode_list---###
 def getting_latlong_from_business(user_category):
     c.execute('SELECT latitude, longitude from business_table INNER JOIN geopointe_table ON (business_table.postcode = geopointe_table.postcode) WHERE business_category =?', (user_category, ))
     results = c.fetchall()
-    print(results)
+    return results
+    
+
+def calculate_haversine_distance(latlong, results):
+    lat2 = radians(latlong[0])
+    lon2 = radians(latlong[1])
+    print(lat2,lon2)
+    for item in results:
+       lat1 = radians((item[0]))
+       lon1 = radians((item[1]))
+       print('This is lat1',lat1)
+       print('This is lon1',lon1)
+       dlon = lon2 - lon1
+       print('This is dlon: ',dlon)
+       dlat = lat2 - lat1
+       print('This is dlat: ',dlat)
+       a = (sin(dlat/2))**2 + cos(lat1) * cos(lat2) * (sin(dlon/2))**2
+       print('This is a: ',a)
+       c = 2 * atan2( sqrt(a), sqrt(1-a))
+       print('This is c: ',c)
+       d = 6371 * c
+       print('This is the distance in km: ',d)
 
 
 
@@ -74,7 +95,8 @@ def sort_business_type():
     
     latlong = getting_latlong_from_user() 
     print('This is the latlong', latlong)
-    getting_latlong_from_business(user_category)
+    results = getting_latlong_from_business(user_category)
+    calculate_haversine_distance(latlong, results)
 
 sort_business_type()
 
