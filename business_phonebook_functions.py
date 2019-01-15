@@ -64,6 +64,8 @@ def getting_latlong_from_business(user_category):
     return results
     
 
+###---Calculating distance between user's postcode and postcodes in database---###
+distance_list = []
 def calculate_haversine_distance(latlong, results):
     lat2 = radians(latlong[0])
     lon2 = radians(latlong[1])
@@ -83,6 +85,8 @@ def calculate_haversine_distance(latlong, results):
        print('This is c: ',c)
        d = 6371 * c
        print('This is the distance in km: ',d)
+       distance_list.append(d)
+    return distance_list
 
 
 
@@ -96,7 +100,8 @@ def sort_business_type():
     latlong = getting_latlong_from_user() 
     print('This is the latlong', latlong)
     results = getting_latlong_from_business(user_category)
-    calculate_haversine_distance(latlong, results)
+    distance = calculate_haversine_distance(latlong, results)
+    print('This is the list of distances', distance)
 
 sort_business_type()
 
