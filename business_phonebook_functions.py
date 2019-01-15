@@ -47,28 +47,21 @@ def extract_business_type_postcode_list(user_category):
 def getting_latlong_from_user():  
     user_location = input('What postcode would you like to search? ')
     postcode_response = requests.get(endpoint_postcode + user_location)
-    data_postcode = postcode_response.json()
-    
+    data_postcode = postcode_response.json()  
     if data_postcode['status'] == 200:
         longitude = data_postcode['result'] ['longitude']
         latitude = data_postcode['result'] ['latitude']
         latlong = [latitude, longitude]
         return latlong
-    
     else:
         print('Postcode not recognized!')
 
 
-
-###---Getting latitude and longitude from business_category_postcode_list---###  
-def getting_latlong_from_business():
-    c.execute('SELECT longitude, latitude FROM business_table INNER JOIN geopointe_table ON (business_table.postcode = geopointe_table.postcode) WHERE last_name ="Imorts"')
-    for row in c.fetchall():
-        print(row)
-#join_tables()
-
-
-
+#---Getting latitude and longitude from business_category_postcode_list---###
+def getting_latlong_from_business(user_category):
+    c.execute('SELECT latitude, longitude from business_table INNER JOIN geopointe_table ON (business_table.postcode = geopointe_table.postcode) WHERE business_category =?', (user_category, ))
+    results = c.fetchall()
+    print(results)
 
 
 
@@ -81,7 +74,7 @@ def sort_business_type():
     
     latlong = getting_latlong_from_user() 
     print('This is the latlong', latlong)
-
+    getting_latlong_from_business(user_category)
 
 sort_business_type()
 
