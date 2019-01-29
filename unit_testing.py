@@ -18,9 +18,17 @@ class testFunctions(unittest.TestCase):
 #checking returned list not empty, if empty will return False
         self.assertTrue(create_business_category_list())
         
-    def test_extract_business_type_list(self, user_category):
-        self.assertIsInstance()
+    def test_getting_latlong_from_user(self):
+        self.assertIsNotNone(getting_latlong_from_user())
+#        self.assertFalse(getting_latlong_from_user())
 
+#checking returned list not empty, if empty will return False    
+#checking one time with valid input --> list is not empty
+#checking one time with invalid input --> list is empty --> Test fails        
+    def test_getting_latlong_from_business(self):
+        self.assertTrue(getting_latlong_from_business('Home'), list)
+        self.assertTrue(getting_latlong_from_business('Dog'), list)
+    
         
 if __name__ == "__main__":
     unittest.main()

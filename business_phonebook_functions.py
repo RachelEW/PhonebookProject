@@ -74,9 +74,12 @@ def extract_business_type_postcode_list(user_category):
 
 ###---Getting latitude and longitude from user's postcode---###  
 def getting_latlong_from_user():  
+    count = 0
+    while count < 3: 
         user_location = input(('What postcode would you like to search? ').strip())
         postcode_response = requests.get(endpoint_postcode + user_location)
         data_postcode = postcode_response.json()  
+        
      
         if data_postcode['status'] == 200:
             longitude = data_postcode['result'] ['longitude']
@@ -85,7 +88,8 @@ def getting_latlong_from_user():
             return latlong
         else:
             print('Postcode not recognized!')
-            return False
+            count += 1
+    return False
 
 
         
@@ -98,7 +102,11 @@ def getting_latlong_from_business(user_category):
     c.close()
     conn.close()
     print('number of results', results)
-    return results
+    if results == []:
+        print('This is an empty list')
+        return False
+    else:
+        return results
     
 
 ###---Calculating distance between user's postcode and postcodes in database---###
@@ -147,24 +155,33 @@ def create_distance_postcode_dictionary(distance_list, business_results):
 
 ###---user inputs which business type to filter results by---###        
 def sort_business_type():
-    business_category_list = create_business_category_list()
-    user_category = input('Choose one of the following business types{}'.format(business_category_list))
-    user_category = user_category.title().strip()
-    business_results = extract_business_type_list(user_category)
- 
-    business_category_postcode_list = extract_business_type_postcode_list(user_category)
-    latlong = getting_latlong_from_user()
+    count = 0
+    while count < 3: 
+        business_category_list = create_business_category_list()
+        user_category = input('Choose one of the following business types{}'.format(business_category_list))
+        user_category = user_category.title().strip()
     
-# function will only be run if the user inputs a valid postcode     
-    if latlong!= False: 
-        print('This is the latlong', latlong)
-        results = getting_latlong_from_business(user_category)
-        distance_list = calculate_haversine_distance(latlong, results)
-        print('This is the list of distances', distance_list)
-        sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
+        if user_category in business_category_list:
+            business_results = extract_business_type_list(user_category)
+         
+            business_category_postcode_list = extract_business_type_postcode_list(user_category)
+            latlong = getting_latlong_from_user()
+            
+        # function will only be run if the user inputs a valid postcode     
+            if latlong!= False: 
+                print('This is the latlong', latlong)
+                results = getting_latlong_from_business(user_category)
+                distance_list = calculate_haversine_distance(latlong, results)
+                print('This is the list of distances', distance_list)
+                sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
+        else:
+             count += 1
+             print('Please only type in a category from the list')
     else:
-        print('Please try again.')
+        print('You have entered an invalid input too many times.')
     
+    
+#
 
 sort_business_type()
 
