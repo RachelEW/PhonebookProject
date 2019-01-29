@@ -194,7 +194,7 @@ def sort_business_type():
 
 def extract_business_name_list(user_name):
     c = getdb()
-    c.execute('SELECT * from business_table INNER JOIN geopointe_table ON (business_table.postcode = geopointe_table.postcode) WHERE business_name =?', (user_name,))
+    c.execute('SELECT * from business_table INNER JOIN geopointe_table ON (business_table.postcode = geopointe_table.postcode) WHERE business_name like ?', ("%"+user_name+"%",))
     business_name_results = [row for row in c.fetchall()]
 
     c.close()
@@ -240,22 +240,22 @@ def sort_business_name():
         user_name = user_name.title()
         
         
-        if user_name in business_name_list:
-            business_results = extract_business_name_list(user_name)
-        
-            latlong = getting_latlong_from_user()
-                    
-        # function will only be run if the user inputs a valid postcode     
-            if latlong!= False: 
-                print('This is the latlong', latlong)
-                results = getting_latlong_from_business(user_name)
-                distance_list = calculate_haversine_distance(latlong, results)
-                print('This is the list of distances', distance_list)
-                sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
-                return sorted_dictionary 
-        else:
-            count += 1
-            print('This business name is not in the database')
+#        if userName in business_name_list:
+        business_results = extract_business_name_list(user_name)
+    
+        latlong = getting_latlong_from_user()
+                
+    # function will only be run if the user inputs a valid postcode     
+        if latlong!= False: 
+            print('This is the latlong', latlong)
+            results = getting_latlong_from_business(user_name)
+            distance_list = calculate_haversine_distance(latlong, results)
+            print('This is the list of distances', distance_list)
+            sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
+            return sorted_dictionary 
+#        else:
+#            count += 1
+#            print('This business name is not in the database')
 
     print('You have entered an invalid input too many times.')
     
