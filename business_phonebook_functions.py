@@ -164,7 +164,7 @@ def sort_business_type():
         if user_category in business_category_list:
             business_results = extract_business_type_list(user_category)
          
-            business_category_postcode_list = extract_business_type_postcode_list(user_category)
+#            business_category_postcode_list = extract_business_type_postcode_list(user_category)
             latlong = getting_latlong_from_user()
             
         # function will only be run if the user inputs a valid postcode     
@@ -174,6 +174,7 @@ def sort_business_type():
                 distance_list = calculate_haversine_distance(latlong, results)
                 print('This is the list of distances', distance_list)
                 sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
+                return sorted_dictionary 
         else:
              count += 1
              print('Please only type in a category from the list')
@@ -183,7 +184,107 @@ def sort_business_type():
     
 #
 
-sort_business_type()
 
 
 
+
+#---------------------------------------------#
+#Filtering Business Table by Business Name 
+#---------------------------------------------#
+
+def extract_business_name_list(user_name):
+    c = getdb()
+    c.execute('SELECT * from business_table INNER JOIN geopointe_table ON (business_table.postcode = geopointe_table.postcode) WHERE business_name =?', (user_name,))
+    business_name_results = [row for row in c.fetchall()]
+
+    c.close()
+    conn.close()
+    print('Lets see the order of the business results', business_name_results )
+    return business_name_results
+
+def getting_latlong_from_business(user_name):
+    c = getdb()
+    c.execute('SELECT latitude, longitude from business_table INNER JOIN geopointe_table ON (business_table.postcode = geopointe_table.postcode) WHERE business_name =?', (user_name, ))
+    results = c.fetchall()
+    c.close()
+    conn.close()
+    print('number of results', results)
+    if results == []:
+        print('This is an empty list')
+        return False
+    else:
+        return results
+
+
+def create_business_name_list():
+    try:
+        c = getdb()
+        c.execute('SELECT distinct (business_name) FROM business_table')
+        results = c.fetchall()
+        new_results = [i[0] for i in results]  
+    #    print(new_results)      
+        c.close()
+        conn.close()
+        return new_results
+    except:
+        return False
+
+
+
+def sort_business_name():
+    count = 0
+    while count < 3: 
+        business_name_list = create_business_name_list()
+        
+        user_name = input('What is the name of the business you would like to find? ')
+        user_name = user_name.title()
+        
+        
+        if user_name in business_name_list:
+            business_results = extract_business_name_list(user_name)
+        
+            latlong = getting_latlong_from_user()
+                    
+        # function will only be run if the user inputs a valid postcode     
+            if latlong!= False: 
+                print('This is the latlong', latlong)
+                results = getting_latlong_from_business(user_name)
+                distance_list = calculate_haversine_distance(latlong, results)
+                print('This is the list of distances', distance_list)
+                sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
+                return sorted_dictionary 
+        else:
+            count += 1
+            print('This business name is not in the database')
+
+    print('You have entered an invalid input too many times.')
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#---------------------------------------------#
+#Testing 
+#---------------------------------------------#
+
+#sort_business_type()
+sort_business_name()
