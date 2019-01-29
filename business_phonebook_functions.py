@@ -129,9 +129,10 @@ def create_distance_postcode_dictionary(distance_list, business_results):
         distance_postcode_dictionary[distance] = business_results[count]
         count += 1
             
-    print("\nDictionary: ",distance_postcode_dictionary)
-
-
+#    print("\nDictionary: ",distance_postcode_dictionary)
+    sorted_dictionary = sorted(distance_postcode_dictionary.items(), key= lambda kv:kv[0])
+    print('\nSorted Dictionary:', sorted_dictionary)
+    return sorted_dictionary
 
 
 ###---user inputs which business type to filter results by---###        
@@ -147,7 +148,7 @@ def sort_business_type():
     results = getting_latlong_from_business(user_category)
     distance_list = calculate_haversine_distance(latlong, results)
     print('This is the list of distances', distance_list)
-    create_distance_postcode_dictionary(distance_list, business_results)
+    sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
     
 
 sort_business_type()
