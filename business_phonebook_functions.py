@@ -34,6 +34,8 @@ def create_business_category_list():
         results = c.fetchall()
         new_results = [i[0] for i in results]  
     #    print(new_results)      
+        c.close()
+        conn.close()
         return new_results
     except:
         return False
@@ -42,23 +44,29 @@ def create_business_category_list():
 ###---Returns all information where business_category = user_category---###
 def extract_business_type_list(user_category):
     c = getdb()
-    c.execute('SELECT * FROM business_table WHERE business_category =?', (user_category,))
+    c.execute('SELECT * from business_table INNER JOIN geopointe_table ON (business_table.postcode = geopointe_table.postcode) WHERE business_category =?', (user_category,))
     business_results = [row for row in c.fetchall()]
 #    for row in c.fetchall():
 #        business_results.append(row)
+    c.close()
+    conn.close()
+    print('Lets see the order of the business results', business_results )
     return business_results
         
         
         
-###---Generates list of postcodes for businesses from extract_business_type_list()---###     
-business_category_postcode_list = []        
+###---Generates list of postcodes for businesses from extract_business_type_list()---###            
 def extract_business_type_postcode_list(user_category):
-    business_results = extract_business_type_list(user_category)    
-#    c.execute('SELECT * FROM business_table WHERE business_category =?', (user_category,))    
+    business_category_postcode_list = []
+    c = getdb()
+#    business_results = extract_business_type_list(user_category)    
+    c.execute('SELECT * from business_table INNER JOIN geopointe_table ON (business_table.postcode = geopointe_table.postcode) WHERE business_category =?', (user_category,))    
     for row in c.fetchall():
         if row[4] not in business_category_postcode_list:
             business_category_postcode_list.append(row[4])
     print('see if we get the postcodes', business_category_postcode_list)
+    c.close()
+    conn.close()
     return(business_category_postcode_list)
 
 
@@ -79,14 +87,18 @@ def getting_latlong_from_user():
 
 #---Getting latitude and longitude from business_category_postcode_list---###
 def getting_latlong_from_business(user_category):
+    c = getdb()
     c.execute('SELECT latitude, longitude from business_table INNER JOIN geopointe_table ON (business_table.postcode = geopointe_table.postcode) WHERE business_category =?', (user_category, ))
     results = c.fetchall()
+    c.close()
+    conn.close()
+    print('number of results', results)
     return results
     
 
 ###---Calculating distance between user's postcode and postcodes in database---###
-distance_list = []
 def calculate_haversine_distance(latlong, results):
+    distance_list = []
     lat2 = radians(latlong[0])
     lon2 = radians(latlong[1])
     print(lat2,lon2)
@@ -108,22 +120,37 @@ def calculate_haversine_distance(latlong, results):
        distance_list.append(d)
     return distance_list
 
+def create_distance_postcode_dictionary(distance_list, business_results):
+    print('Printing both lists before making dictionary: ',distance_list, business_results)
+#    distance_postcode_dictionary = dict(zip(distance_list,business_results))
+    distance_postcode_dictionary = {}
+    count = 0       
+    for distance in distance_list:
+        distance_postcode_dictionary[distance] = business_results[count]
+        count += 1
+            
+    print("\nDictionary: ",distance_postcode_dictionary)
+
+
 
 
 ###---user inputs which business type to filter results by---###        
 def sort_business_type():
+    business_category_list = create_business_category_list()
     user_category = input('Choose one of the following business types{}'.format(business_category_list))
-    extract_business_type_list(user_category)
+    business_results = extract_business_type_list(user_category)
  
-    extract_business_type_postcode_list(user_category)
+    business_category_postcode_list = extract_business_type_postcode_list(user_category)
     
     latlong = getting_latlong_from_user() 
     print('This is the latlong', latlong)
     results = getting_latlong_from_business(user_category)
-    distance = calculate_haversine_distance(latlong, results)
-    print('This is the list of distances', distance)
+    distance_list = calculate_haversine_distance(latlong, results)
+    print('This is the list of distances', distance_list)
+    create_distance_postcode_dictionary(distance_list, business_results)
+    
 
-#sort_business_type()
+sort_business_type()
 
 
 
