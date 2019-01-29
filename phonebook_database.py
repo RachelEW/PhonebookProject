@@ -152,3 +152,7 @@ def join_tables():
 
 #read_from_people_phonebook1()
 #read_from_business_phonebook_1()
+
+#closing cursor
+c.close()
+conn.close()

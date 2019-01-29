@@ -8,33 +8,53 @@ from phonebook_database import *
 from math import radians, sin, asin, cos, atan, atan2, sqrt
 
 #---------------------------------------------#
+#Connect to database
+#---------------------------------------------#
+
+def getdb():
+    try:
+        conn = sqlite3.connect('phonebook2.db')
+        c = conn.cursor()
+        return c
+    except:
+        return False
+
+#---------------------------------------------#
 #Filtering Business Table by Business Category
 #---------------------------------------------#
 
 
 ##---creates list of all business categories---###
 ##SELECT DISTINCT SQLitetutorial possible as well ##
-business_category_list = []
+
 def create_business_category_list():
-    c.execute('SELECT * FROM business_table')
-    for row in c.fetchall():
-        if row[7] not in business_category_list:
-            business_category_list.append(row[7])
-    return business_category_list
-create_business_category_list()
+    try:
+        c = getdb()
+        c.execute('SELECT distinct (business_category) FROM business_table')
+        results = c.fetchall()
+        new_results = [i[0] for i in results]  
+    #    print(new_results)      
+        return new_results
+    except:
+        return False
+#create_business_category_list()
 
 ###---Returns all information where business_category = user_category---###
 def extract_business_type_list(user_category):
+    c = getdb()
     c.execute('SELECT * FROM business_table WHERE business_category =?', (user_category,))
-    for row in c.fetchall():
-        print(row)
+    business_results = [row for row in c.fetchall()]
+#    for row in c.fetchall():
+#        business_results.append(row)
+    return business_results
         
         
         
 ###---Generates list of postcodes for businesses from extract_business_type_list()---###     
 business_category_postcode_list = []        
-def extract_business_type_postcode_list(user_category):    
-    c.execute('SELECT * FROM business_table WHERE business_category =?', (user_category,))    
+def extract_business_type_postcode_list(user_category):
+    business_results = extract_business_type_list(user_category)    
+#    c.execute('SELECT * FROM business_table WHERE business_category =?', (user_category,))    
     for row in c.fetchall():
         if row[4] not in business_category_postcode_list:
             business_category_postcode_list.append(row[4])
@@ -103,7 +123,7 @@ def sort_business_type():
     distance = calculate_haversine_distance(latlong, results)
     print('This is the list of distances', distance)
 
-sort_business_type()
+#sort_business_type()
 
 
 
