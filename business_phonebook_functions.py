@@ -95,18 +95,20 @@ def getting_latlong_from_user():
         
         
 #---Getting latitude and longitude from business_category_postcode_list---###
-def getting_latlong_from_business(user_category):
+def getting_latlong_from_business_category(user_category):
     c = getdb()
-    c.execute('SELECT latitude, longitude from business_table INNER JOIN geopointe_table ON (business_table.postcode = geopointe_table.postcode) WHERE business_category =?', (user_category, ))
+    c.execute('SELECT latitude, longitude from business_table INNER JOIN geopointe_table ON (business_table.postcode = geopointe_table.postcode) WHERE business_category =?', (user_category,))
     results = c.fetchall()
     c.close()
     conn.close()
     print('number of results', results)
-    if results == []:
-        print('This is an empty list')
-        return False
-    else:
-        return results
+    return results
+#    if results == []:
+#        print('This is an empty list')
+#        return False
+#    else:
+#        return results
+    
     
 
 ###---Calculating distance between user's postcode and postcodes in database---###
@@ -160,17 +162,18 @@ def sort_business_type():
         business_category_list = create_business_category_list()
         user_category = input('Choose one of the following business types{}'.format(business_category_list))
         user_category = user_category.title().strip()
+        print(user_category)
     
         if user_category in business_category_list:
             business_results = extract_business_type_list(user_category)
          
-#            business_category_postcode_list = extract_business_type_postcode_list(user_category)
+    #            business_category_postcode_list = extract_business_type_postcode_list(user_category)
             latlong = getting_latlong_from_user()
             
         # function will only be run if the user inputs a valid postcode     
             if latlong!= False: 
                 print('This is the latlong', latlong)
-                results = getting_latlong_from_business(user_category)
+                results = getting_latlong_from_business_category(user_category)
                 distance_list = calculate_haversine_distance(latlong, results)
                 print('This is the list of distances', distance_list)
                 sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
@@ -202,15 +205,15 @@ def extract_business_name_list(user_name):
     print('Lets see the order of the business results', business_name_results )
     return business_name_results
 
-def getting_latlong_from_business(user_name):
+def getting_latlong_from_business_name(user_name):
     c = getdb()
-    c.execute('SELECT latitude, longitude from business_table INNER JOIN geopointe_table ON (business_table.postcode = geopointe_table.postcode) WHERE business_name =?', (user_name, ))
+    c.execute('SELECT latitude, longitude from business_table INNER JOIN geopointe_table ON (business_table.postcode = geopointe_table.postcode) WHERE business_name like ?', ("%"+user_name+"%",))
     results = c.fetchall()
     c.close()
     conn.close()
     print('number of results', results)
     if results == []:
-        print('This is an empty list')
+        print('*****This is an empty list')
         return False
     else:
         return results
@@ -248,7 +251,7 @@ def sort_business_name():
     # function will only be run if the user inputs a valid postcode     
         if latlong!= False: 
             print('This is the latlong', latlong)
-            results = getting_latlong_from_business(user_name)
+            results = getting_latlong_from_business_name(user_name)
             distance_list = calculate_haversine_distance(latlong, results)
             print('This is the list of distances', distance_list)
             sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
@@ -270,9 +273,32 @@ def sort_business_name():
 
 
 
+#------------------------------------------------------------------#
+#Function for choosing to search by business type or business name 
+#------------------------------------------------------------------#
 
-
-
+def choose_search_type():
+    count = 0 
+    while count < 3:      
+        try:
+            search_type = int(input('''Do you want to search a business by : 
+                (1) business type
+                or 
+                (2) business name? '''))
+            if search_type == 1:
+                sort_business_type()
+            elif search_type == 2:
+                sort_business_name()
+        except ValueError:
+            count += 1
+            if count < 3:
+                print('Please only choose 1 or 2 ')
+            
+    print('Exit')
+    return count
+    
+            
+        
 
 
 
@@ -286,5 +312,6 @@ def sort_business_name():
 #Testing 
 #---------------------------------------------#
 
-#sort_business_type()
-sort_business_name()
+sort_business_type()
+#sort_business_name()
+#choose_search_type()
