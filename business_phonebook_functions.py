@@ -141,14 +141,25 @@ def calculate_haversine_distance(latlong, results):
         print('Please enter a valid postcode')
         
 
-def create_distance_postcode_dictionary(distance_list, business_results):
-    print('Printing both lists before making dictionary: ',distance_list, business_results)
+def create_unsorted_dictionary(distance_list, business_results):
 #    distance_postcode_dictionary = dict(zip(distance_list,business_results))
     distance_postcode_dictionary = {}
     count = 0       
     for distance in distance_list:
         distance_postcode_dictionary[distance] = business_results[count]
         count += 1
+    return distance_postcode_dictionary
+
+
+def create_distance_postcode_dictionary(distance_postcode_dictionary):
+#    print('Printing both lists before making dictionary: ',distance_list, business_results)
+#    distance_postcode_dictionary = dict(zip(distance_list,business_results))
+#    distance_postcode_dictionary = {}
+#    count = 0       
+#    for distance in distance_list:
+#        distance_postcode_dictionary[distance] = business_results[count]
+#        count += 1
+#    distance_postcode_dictionary = create_unsorted_dictionary(distance_list, business_results)
 #    print("\nDictionary: ",distance_postcode_dictionary)
     sorted_dictionary = sorted(distance_postcode_dictionary.items(), key= lambda kv:kv[0])
     print('\nSorted Dictionary:', sorted_dictionary)
@@ -228,6 +239,23 @@ def create_business_name_list():
         return False
 
 
+def sort_alphabetically(distance_postcode_dictionary):
+    count = 0
+    while count < 3:
+        sort_a_to_z = input("Would you like to sort the results alphabetically instead? ")
+        sort_a_to_z = sort_a_to_z.lower()[0]
+        if sort_a_to_z =="y":
+            print('sort alphabetically')
+            alphabetically_sorted_dictionary = sorted(distance_postcode_dictionary.items(), key= lambda kv:kv[1][0])
+            return alphabetically_sorted_dictionary
+        elif sort_a_to_z == "n":
+            return False
+        else:
+            print('Only choose yes or no')
+            count +=1
+    return False
+        
+    
 def sort_business_name():
     count = 0
     while count < 3: 
@@ -244,8 +272,20 @@ def sort_business_name():
                 results = getting_latlong_from_business_name(user_name)
                 distance_list = calculate_haversine_distance(latlong, results)
                 print('This is the list of distances', distance_list)
-                sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
-                return sorted_dictionary 
+            #create dictionary
+                distance_postcode_dictionary = create_unsorted_dictionary(distance_list, business_results)
+            #sorted by location
+                sorted_dictionary = create_distance_postcode_dictionary(distance_postcode_dictionary)
+#                print(sorted_dictionary)
+            #sorted alphabetically
+                alphabetically_sorted_dictionary = sort_alphabetically(distance_postcode_dictionary)
+                if alphabetically_sorted_dictionary != False:
+                    print('A to Z dictionary: ', alphabetically_sorted_dictionary)
+                else:
+                    print("Sorted by Location: ",sorted_dictionary)
+                    return sorted_dictionary
+
+                
         else:
             count += 1
     print('You have entered an invalid input too many times.')
@@ -283,7 +323,27 @@ People phonebook functions
 #------------------------------------------------------------------#
 '''
 
-
+def sort_people_surname():
+    count = 0
+    while count < 3: 
+        business_name_list = create_business_name_list()
+        user_name = input('What is the name of the business you would like to find? ')
+        user_name = user_name.title()
+        business_results = extract_business_name_list(user_name)
+        # function will only run if the user input is part of the name of at least one business in the phonebook
+        if business_results != False:
+            latlong = getting_latlong_from_user()
+        # function will only be run if the user inputs a valid postcode     
+            if latlong!= False: 
+                print('This is the latlong', latlong)
+                results = getting_latlong_from_business_name(user_name)
+                distance_list = calculate_haversine_distance(latlong, results)
+                print('This is the list of distances', distance_list)
+                sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
+                return sorted_dictionary 
+        else:
+            count += 1
+    print('You have entered an invalid input too many times.')
 
 
 #---------------------------------------------#
