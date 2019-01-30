@@ -173,7 +173,6 @@ def sort_business_type():
         business_category_list = create_business_category_list()
         user_category = input('Choose one of the following business types{}'.format(business_category_list))
         user_category = user_category.title().strip()
-        print(user_category)
         if user_category in business_category_list:
             business_results = extract_business_type_list(user_category)
     #            business_category_postcode_list = extract_business_type_postcode_list(user_category)
@@ -184,8 +183,22 @@ def sort_business_type():
                 results = getting_latlong_from_business_category(user_category)
                 distance_list = calculate_haversine_distance(latlong, results)
                 print('This is the list of distances', distance_list)
-                sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
-                return sorted_dictionary 
+                
+            #create dictionary
+                distance_postcode_dictionary = create_unsorted_dictionary(distance_list, business_results)
+            #sorted by location
+                sorted_dictionary = create_distance_postcode_dictionary(distance_postcode_dictionary)
+#                print(sorted_dictionary)
+            #sorted alphabetically
+                alphabetically_sorted_dictionary = sort_alphabetically(distance_postcode_dictionary)
+                if alphabetically_sorted_dictionary != False:
+                    print('A to Z dictionary: ', alphabetically_sorted_dictionary)
+                else:
+                    print("Sorted by Location: ",sorted_dictionary)
+                    return sorted_dictionary
+                
+#                sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
+#                return sorted_dictionary 
         else:
              count += 1
              print('Please only type in a category from the list')
@@ -284,8 +297,6 @@ def sort_business_name():
                 else:
                     print("Sorted by Location: ",sorted_dictionary)
                     return sorted_dictionary
-
-                
         else:
             count += 1
     print('You have entered an invalid input too many times.')
