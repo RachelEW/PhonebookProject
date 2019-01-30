@@ -18,6 +18,14 @@ def getdb():
         return c
     except:
         return False
+    
+'''
+#------------------------------------------------------------------#
+#------------------------------------------------------------------#
+Business phonebook functions 
+#------------------------------------------------------------------#
+#------------------------------------------------------------------#
+'''
 
 #---------------------------------------------#
 #Filtering Business Table by Business Category
@@ -41,6 +49,7 @@ def create_business_category_list():
         return False
 #create_business_category_list()
 
+
 ###---Returns all information where business_category = user_category---###
 def extract_business_type_list(user_category):
     c = getdb()
@@ -52,7 +61,6 @@ def extract_business_type_list(user_category):
     conn.close()
     print('Lets see the order of the business results', business_results )
     return business_results
-        
         
         
 ###---Generates list of postcodes for businesses from extract_business_type_list()---###            
@@ -70,8 +78,6 @@ def extract_business_type_postcode_list(user_category):
     return(business_category_postcode_list)
 
 
-
-
 ###---Getting latitude and longitude from user's postcode---###  
 def getting_latlong_from_user():  
     count = 0
@@ -79,8 +85,6 @@ def getting_latlong_from_user():
         user_location = input(('What postcode would you like to search? ').strip())
         postcode_response = requests.get(endpoint_postcode + user_location)
         data_postcode = postcode_response.json()  
-        
-     
         if data_postcode['status'] == 200:
             longitude = data_postcode['result'] ['longitude']
             latitude = data_postcode['result'] ['latitude']
@@ -90,8 +94,6 @@ def getting_latlong_from_user():
             print('Postcode not recognized!')
             count += 1
     return False
-
-
         
         
 #---Getting latitude and longitude from business_category_postcode_list---###
@@ -102,18 +104,15 @@ def getting_latlong_from_business_category(user_category):
     c.close()
     conn.close()
     print('number of results', results)
-    return results
-#    if results == []:
-#        print('This is an empty list')
-#        return False
-#    else:
-#        return results
-    
+    if results == []:
+        print('This is an empty list')
+        return False
+    else:
+        return results
     
 
 ###---Calculating distance between user's postcode and postcodes in database---###
-def calculate_haversine_distance(latlong, results):
-        
+def calculate_haversine_distance(latlong, results):  
     try:
         distance_list = []
         lat2 = radians(latlong[0])
@@ -134,7 +133,9 @@ def calculate_haversine_distance(latlong, results):
            print('This is c: ',c)
            d = 6371 * c
            print('This is the distance in km: ',d)
-           distance_list.append(d)
+           d_rounded = float("{0:.2f}".format(d))
+           print('This is the rounded distance in km: ',d_rounded)
+           distance_list.append(d_rounded)
         return distance_list
     except TypeError: 
         print('Please enter a valid postcode')
@@ -148,7 +149,6 @@ def create_distance_postcode_dictionary(distance_list, business_results):
     for distance in distance_list:
         distance_postcode_dictionary[distance] = business_results[count]
         count += 1
-            
 #    print("\nDictionary: ",distance_postcode_dictionary)
     sorted_dictionary = sorted(distance_postcode_dictionary.items(), key= lambda kv:kv[0])
     print('\nSorted Dictionary:', sorted_dictionary)
@@ -163,13 +163,10 @@ def sort_business_type():
         user_category = input('Choose one of the following business types{}'.format(business_category_list))
         user_category = user_category.title().strip()
         print(user_category)
-    
         if user_category in business_category_list:
             business_results = extract_business_type_list(user_category)
-         
     #            business_category_postcode_list = extract_business_type_postcode_list(user_category)
             latlong = getting_latlong_from_user()
-            
         # function will only be run if the user inputs a valid postcode     
             if latlong!= False: 
                 print('This is the latlong', latlong)
@@ -184,12 +181,6 @@ def sort_business_type():
     else:
         print('You have entered an invalid input too many times.')
     
-    
-#
-
-
-
-
 
 #---------------------------------------------#
 #Filtering Business Table by Business Name 
@@ -199,11 +190,15 @@ def extract_business_name_list(user_name):
     c = getdb()
     c.execute('SELECT * from business_table INNER JOIN geopointe_table ON (business_table.postcode = geopointe_table.postcode) WHERE business_name like ?', ("%"+user_name+"%",))
     business_name_results = [row for row in c.fetchall()]
-
     c.close()
     conn.close()
-    print('Lets see the order of the business results', business_name_results )
-    return business_name_results
+    if business_name_results == []:
+        print('Business name not in phonebook. Please try again.')
+        return False
+    else:
+        print('Lets see the order of the business results', business_name_results )
+        return business_name_results
+
 
 def getting_latlong_from_business_name(user_name):
     c = getdb()
@@ -213,7 +208,7 @@ def getting_latlong_from_business_name(user_name):
     conn.close()
     print('number of results', results)
     if results == []:
-        print('*****This is an empty list')
+        print('This is an empty list')
         return False
     else:
         return results
@@ -233,45 +228,28 @@ def create_business_name_list():
         return False
 
 
-
 def sort_business_name():
     count = 0
     while count < 3: 
         business_name_list = create_business_name_list()
-        
         user_name = input('What is the name of the business you would like to find? ')
         user_name = user_name.title()
-        
-        
-#        if userName in business_name_list:
         business_results = extract_business_name_list(user_name)
-    
-        latlong = getting_latlong_from_user()
-                
-    # function will only be run if the user inputs a valid postcode     
-        if latlong!= False: 
-            print('This is the latlong', latlong)
-            results = getting_latlong_from_business_name(user_name)
-            distance_list = calculate_haversine_distance(latlong, results)
-            print('This is the list of distances', distance_list)
-            sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
-            return sorted_dictionary 
-#        else:
-#            count += 1
-#            print('This business name is not in the database')
-
+        # function will only run if the user input is part of the name of at least one business in the phonebook
+        if business_results != False:
+            latlong = getting_latlong_from_user()
+        # function will only be run if the user inputs a valid postcode     
+            if latlong!= False: 
+                print('This is the latlong', latlong)
+                results = getting_latlong_from_business_name(user_name)
+                distance_list = calculate_haversine_distance(latlong, results)
+                print('This is the list of distances', distance_list)
+                sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
+                return sorted_dictionary 
+        else:
+            count += 1
     print('You have entered an invalid input too many times.')
     
-
-
-
-
-
-
-
-
-
-
 
 #------------------------------------------------------------------#
 #Function for choosing to search by business type or business name 
@@ -293,17 +271,17 @@ def choose_search_type():
             count += 1
             if count < 3:
                 print('Please only choose 1 or 2 ')
-            
     print('Exit')
     return count
-    
-            
-        
+ 
 
-
-
-
-
+'''
+#------------------------------------------------------------------#
+#------------------------------------------------------------------#
+People phonebook functions 
+#------------------------------------------------------------------#
+#------------------------------------------------------------------#
+'''
 
 
 
@@ -312,6 +290,9 @@ def choose_search_type():
 #Testing 
 #---------------------------------------------#
 
-sort_business_type()
+#sort_business_type()
 #sort_business_name()
-#choose_search_type()
+choose_search_type()
+
+
+
