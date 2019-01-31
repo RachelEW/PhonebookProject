@@ -296,7 +296,7 @@ def sort_business_name():
 #Function for choosing to search by business type or business name 
 #------------------------------------------------------------------#
 
-def choose_search_type():
+def choose_search_type_business():
     count = 0 
     while count < 3:      
         try:
@@ -448,6 +448,40 @@ def choose_search_type_person():
     print('Returning to main page')
     return count
 
+
+
+'''
+#------------------------------------------------------------------#
+#------------------------------------------------------------------#
+Function for choosing between business and people phonebook 
+#------------------------------------------------------------------#
+#------------------------------------------------------------------#
+'''
+
+def choose_phonebook():
+    count = 0 
+    while count < 3:      
+        try:
+            search_type = int(input('''Do you want to: 
+                (1) search for a person
+                or 
+                (2) search for a business
+                or
+                (3) Exit ? '''))
+            if search_type == 1:
+                choose_search_type_person()
+            elif search_type == 2:
+                choose_search_type_business()
+            elif search_type == 3:
+                break
+        except ValueError:
+            count += 1
+            if count < 3:
+                print('Please only choose 1, 2 or 3 ')
+    print('Exit')
+    return count
+
+
 #---------------------------------------------#
 #Testing 
 #---------------------------------------------#
@@ -456,8 +490,8 @@ def choose_search_type_person():
 #sort_business_name()
 #sort_people_surname()
 #choose_search_type()
-    
-choose_search_type_person()
+choose_phonebook()
+#choose_search_type_person()
 
 
 
