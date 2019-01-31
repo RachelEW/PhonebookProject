@@ -305,7 +305,7 @@ def choose_search_type():
                 or 
                 (2) business name
                 or 
-                (3) Exit ? '''))
+                (3) Return to main page ? '''))
             if search_type == 1:
                 sort_business_type()
             elif search_type == 2:
@@ -316,7 +316,7 @@ def choose_search_type():
             count += 1
             if count < 3:
                 print('Please only choose 1, 2 or 3 ')
-    print('Exit')
+    print('Returning to main page')
     return count
  
 
@@ -327,7 +327,10 @@ People phonebook functions
 #------------------------------------------------------------------#
 #------------------------------------------------------------------#
 '''
-
+#---------------------------------------------#
+#Filtering People Table by Persons Surname 
+#---------------------------------------------#
+ 
 def extract_people_name_list(user_name):
     c = getdb()
     c.execute('SELECT * from people_table INNER JOIN geopointe_table ON (people_table.postcode = geopointe_table.postcode) WHERE last_name like ?', ("%"+user_name+"%",))
@@ -422,14 +425,39 @@ def sort_people_surname():
     
 
 
+#------------------------------------------------------------------#
+#Function for choosing to search by surname or returning to main page 
+#------------------------------------------------------------------#
+
+def choose_search_type_person():
+    count = 0 
+    while count < 3:      
+        try:
+            search_type = int(input('''Do you want to: 
+                (1) search for a person
+                or 
+                (2) Return to main page ? '''))
+            if search_type == 1:
+                sort_people_surname()
+            elif search_type == 2:
+                break
+        except ValueError:
+            count += 1
+            if count < 3:
+                print('Please only choose 1 or 2 ')
+    print('Returning to main page')
+    return count
+
 #---------------------------------------------#
 #Testing 
 #---------------------------------------------#
 
 #sort_business_type()
 #sort_business_name()
-sort_people_surname()
+#sort_people_surname()
 #choose_search_type()
+    
+choose_search_type_person()
 
 
 
