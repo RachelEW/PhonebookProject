@@ -181,7 +181,7 @@ def sort_business_type():
                 sorted_dictionary = create_distance_postcode_dictionary(distance_postcode_dictionary)
 #                print(sorted_dictionary)
             #sorted alphabetically
-                alphabetically_sorted_dictionary = sort_alphabetically(distance_postcode_dictionary)
+                alphabetically_sorted_dictionary = sort_alphabetically_business(distance_postcode_dictionary)
                 if alphabetically_sorted_dictionary != False:
                     print('A to Z dictionary: ', alphabetically_sorted_dictionary)
                     return alphabetically_sorted_dictionary
@@ -241,7 +241,7 @@ def create_business_name_list():
         return False
 
 
-def sort_alphabetically(distance_postcode_dictionary):
+def sort_alphabetically_business(distance_postcode_dictionary):
     count = 0
     while count < 3:
         sort_a_to_z = input("Would you like to sort the results alphabetically instead? ")
@@ -280,7 +280,7 @@ def sort_business_name():
                 sorted_dictionary = create_distance_postcode_dictionary(distance_postcode_dictionary)
 #                print(sorted_dictionary)
             #sorted alphabetically
-                alphabetically_sorted_dictionary = sort_alphabetically(distance_postcode_dictionary)
+                alphabetically_sorted_dictionary = sort_alphabetically_business(distance_postcode_dictionary)
                 if alphabetically_sorted_dictionary != False:
                     print('A to Z dictionary: ', alphabetically_sorted_dictionary)
                     return alphabetically_sorted_dictionary
@@ -312,6 +312,10 @@ def choose_search_type_business():
                 sort_business_name()
             elif search_type == 3:
                 break
+            else:
+                count += 1
+                if count < 3:
+                    print('Please only choose 1, 2 or 3 ')
         except ValueError:
             count += 1
             if count < 3:
@@ -373,7 +377,7 @@ def create_people_name_list():
         return False
 
 
-def sort_alphabetically(distance_postcode_dictionary):
+def sort_alphabetically_people(distance_postcode_dictionary):
     count = 0
     while count < 3:
         sort_a_to_z = input("Would you like to sort the results alphabetically instead? ")
@@ -412,7 +416,7 @@ def sort_people_surname():
                 sorted_dictionary = create_distance_postcode_dictionary(distance_postcode_dictionary)
 #                print(sorted_dictionary)
             #sorted alphabetically
-                alphabetically_sorted_dictionary = sort_alphabetically(distance_postcode_dictionary)
+                alphabetically_sorted_dictionary = sort_alphabetically_people(distance_postcode_dictionary)
                 if alphabetically_sorted_dictionary != False:
                     print('A to Z dictionary: ', alphabetically_sorted_dictionary)
                     return alphabetically_sorted_dictionary
@@ -441,6 +445,10 @@ def choose_search_type_person():
                 sort_people_surname()
             elif search_type == 2:
                 break
+            else:
+                count += 1
+                if count < 3:
+                    print('Please only choose 1 or 2 ')
         except ValueError:
             count += 1
             if count < 3:
@@ -473,7 +481,12 @@ def choose_phonebook():
             elif search_type == 2:
                 choose_search_type_business()
             elif search_type == 3:
-                break
+                break 
+            else:
+              count += 1
+              if count < 3:
+                print('Please only choose 1, 2 or 3 ')   
+                
         except ValueError:
             count += 1
             if count < 3:
