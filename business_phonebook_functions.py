@@ -152,15 +152,6 @@ def create_unsorted_dictionary(distance_list, business_results):
 
 
 def create_distance_postcode_dictionary(distance_postcode_dictionary):
-#    print('Printing both lists before making dictionary: ',distance_list, business_results)
-#    distance_postcode_dictionary = dict(zip(distance_list,business_results))
-#    distance_postcode_dictionary = {}
-#    count = 0       
-#    for distance in distance_list:
-#        distance_postcode_dictionary[distance] = business_results[count]
-#        count += 1
-#    distance_postcode_dictionary = create_unsorted_dictionary(distance_list, business_results)
-#    print("\nDictionary: ",distance_postcode_dictionary)
     sorted_dictionary = sorted(distance_postcode_dictionary.items(), key= lambda kv:kv[0])
     print('\nSorted Dictionary:', sorted_dictionary)
     return sorted_dictionary
@@ -197,9 +188,6 @@ def sort_business_type():
                 else:
                     print("Sorted by Location: ",sorted_dictionary)
                     return sorted_dictionary
-                
-#                sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
-#                return sorted_dictionary 
         else:
              count += 1
              print('Please only type in a category from the list')
@@ -340,27 +328,98 @@ People phonebook functions
 #------------------------------------------------------------------#
 '''
 
+def extract_people_name_list(user_name):
+    c = getdb()
+    c.execute('SELECT * from people_table INNER JOIN geopointe_table ON (people_table.postcode = geopointe_table.postcode) WHERE last_name like ?', ("%"+user_name+"%",))
+    people_name_results = [row for row in c.fetchall()]
+    c.close()
+    conn.close()
+    if people_name_results == []:
+        print('Person\'s name not in phonebook. Please try again.')
+        return False
+    else:
+        print('Lets see the order of the people results', people_name_results )
+        return people_name_results
+
+
+def getting_latlong_from_people_name(user_name):
+    c = getdb()
+    c.execute('SELECT latitude, longitude from people_table INNER JOIN geopointe_table ON (people_table.postcode = geopointe_table.postcode) WHERE last_name like ?', ("%"+user_name+"%",))
+    results = c.fetchall()
+    c.close()
+    conn.close()
+    print('number of results', results)
+    if results == []:
+        print('This is an empty list')
+        return False
+    else:
+        return results
+
+
+def create_people_name_list():
+    try:
+        c = getdb()
+        c.execute('SELECT distinct (people_name) FROM people_table')
+        results = c.fetchall()
+        new_results = [i[0] for i in results]  
+    #    print(new_results)      
+        c.close()
+        conn.close()
+        return new_results
+    except:
+        return False
+
+
+def sort_alphabetically(distance_postcode_dictionary):
+    count = 0
+    while count < 3:
+        sort_a_to_z = input("Would you like to sort the results alphabetically instead? ")
+        sort_a_to_z = sort_a_to_z.lower()[0]
+        if sort_a_to_z =="y":
+            print('sort alphabetically')
+            alphabetically_sorted_dictionary = sorted(distance_postcode_dictionary.items(), key= lambda kv:kv[1][1])
+            return alphabetically_sorted_dictionary
+        elif sort_a_to_z == "n":
+            return False
+        else:
+            print('Only choose yes or no')
+            count +=1
+    return False
+
+
 def sort_people_surname():
     count = 0
     while count < 3: 
-        business_name_list = create_business_name_list()
-        user_name = input('What is the name of the business you would like to find? ')
+        people_name_list = create_people_name_list()
+        user_name = input('What is the surname of the person you would like to find? ')
         user_name = user_name.title()
-        business_results = extract_business_name_list(user_name)
+        people_results = extract_people_name_list(user_name)
         # function will only run if the user input is part of the name of at least one business in the phonebook
-        if business_results != False:
+        if people_results != False:
             latlong = getting_latlong_from_user()
         # function will only be run if the user inputs a valid postcode     
             if latlong!= False: 
                 print('This is the latlong', latlong)
-                results = getting_latlong_from_business_name(user_name)
+                results = getting_latlong_from_people_name(user_name)
                 distance_list = calculate_haversine_distance(latlong, results)
                 print('This is the list of distances', distance_list)
-                sorted_dictionary = create_distance_postcode_dictionary(distance_list, business_results)
-                return sorted_dictionary 
+            #create dictionary
+                distance_postcode_dictionary = create_unsorted_dictionary(distance_list, people_results)
+            #sorted by location
+                sorted_dictionary = create_distance_postcode_dictionary(distance_postcode_dictionary)
+#                print(sorted_dictionary)
+            #sorted alphabetically
+                alphabetically_sorted_dictionary = sort_alphabetically(distance_postcode_dictionary)
+                if alphabetically_sorted_dictionary != False:
+                    print('A to Z dictionary: ', alphabetically_sorted_dictionary)
+                    return alphabetically_sorted_dictionary
+                else:
+                    print("Sorted by Location: ",sorted_dictionary)
+                    return sorted_dictionary
         else:
             count += 1
     print('You have entered an invalid input too many times.')
+    
 
 
 #---------------------------------------------#
@@ -369,7 +428,8 @@ def sort_people_surname():
 
 #sort_business_type()
 #sort_business_name()
-choose_search_type()
+sort_people_surname()
+#choose_search_type()
 
 
 
