@@ -193,6 +193,7 @@ def sort_business_type():
                 alphabetically_sorted_dictionary = sort_alphabetically(distance_postcode_dictionary)
                 if alphabetically_sorted_dictionary != False:
                     print('A to Z dictionary: ', alphabetically_sorted_dictionary)
+                    return alphabetically_sorted_dictionary
                 else:
                     print("Sorted by Location: ",sorted_dictionary)
                     return sorted_dictionary
@@ -294,6 +295,7 @@ def sort_business_name():
                 alphabetically_sorted_dictionary = sort_alphabetically(distance_postcode_dictionary)
                 if alphabetically_sorted_dictionary != False:
                     print('A to Z dictionary: ', alphabetically_sorted_dictionary)
+                    return alphabetically_sorted_dictionary
                 else:
                     print("Sorted by Location: ",sorted_dictionary)
                     return sorted_dictionary
@@ -313,15 +315,19 @@ def choose_search_type():
             search_type = int(input('''Do you want to search a business by : 
                 (1) business type
                 or 
-                (2) business name? '''))
+                (2) business name
+                or 
+                (3) Exit ? '''))
             if search_type == 1:
                 sort_business_type()
             elif search_type == 2:
                 sort_business_name()
+            elif search_type == 3:
+                break
         except ValueError:
             count += 1
             if count < 3:
-                print('Please only choose 1 or 2 ')
+                print('Please only choose 1, 2 or 3 ')
     print('Exit')
     return count
  
