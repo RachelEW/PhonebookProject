@@ -503,7 +503,7 @@ def choose_phonebook():
 #sort_business_name()
 #sort_people_surname()
 #choose_search_type()
-choose_phonebook()
+#choose_phonebook()
 #choose_search_type_person()
 
 
